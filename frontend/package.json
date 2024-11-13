@@ -10,8 +10,18 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@nuxtjs/axios": "^5.13.6",
+    "@pinia/nuxt": "^0.7.0",
+    "font-awesome": "^4.7.0",
     "nuxt": "^3.14.159",
-    "vue": "latest",
+    "pinia": "^2.2.6",
+    "vue": "^3.2.0",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14"
   }
 }
