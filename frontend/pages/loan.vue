@@ -1,6 +1,6 @@
 <template>
     <div class="mx-10 my-6 flex justify-center">
-        <div class="bg-white shadow-lg rounded-lg p-6 w-[500px] flex justify-center flex-col align-center w-full">
+        <div class="bg-white shadow-lg rounded-lg p-6 w-[500px] flex justify-center flex-col align-center">
             <div class="text-2xl font-bold text-[#100D35] mb-4 text-center">Loan Details</div>
 
             <!-- Loan Name -->
@@ -60,40 +60,31 @@
 definePageMeta({
     layout: "home",
 });
-import { useLoanStore } from '~~/stores/loanStore';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { ref, watchEffect } from 'vue';
 
-const loanStore = useLoanStore();
-const loans = loanStore.getLoans;
 const route = useRoute();
-const loanId = String(route.query.id);
-let loan = null;
+const router = useRouter();
+const loanId = route.query.id;
+const loan = ref(null);
 
-// Fetch loans if not already loaded
-if (!loans || loans.length === 0) {
-    const { data: fetchedLoans, error } = await useFetch('/api/loans');
-    if (fetchedLoans) {
-        loanStore.setLoans(fetchedLoans); // Use the setLoans action to update the loans
+const { data: loans, error } = await useFetch('/api/loans');
+
+// Watch for loans data to be ready, then set the correct loan
+watchEffect(() => {
+    if (loanId && loans.value?.length > 0) {
+        loan.value = loans.value.find(l => String(l._id) === loanId);
     }
-}
-
-// Find the loan with the matching loanId
-if (loanId && loans.length > 0) {
-    loan = loans.find(l => String(l._id) === loanId);
-}
-
+});
 const deleteLoan = async () => {
     try {
-        // Call the server-side API to delete the loan
         const { data, error } = await useFetch('/api/loans', {
             method: 'DELETE',
-            body: { loanId } // Pass the loanId in the request body
+            body: { loanId } 
         });
 
         if (data._rawValue.success) {
-            loanStore.setLoans(loans.filter(l => l._id !== loanId)); // Remove the loan from store
-            // Optionally, redirect or notify the user
-            navigateTo('/'); // Redirect to the homepage or another page after successful deletion
+            navigateTo('/');
         } else {
             console.error('Failed to delete loan');
         }
