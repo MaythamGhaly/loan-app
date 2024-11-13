@@ -1,10 +1,8 @@
-// const User = require('../models/users.model');
 const Loan = require('../models/loans.model');
+const Currencies = require("../models/currencies.model")
 const axios = require('axios');
-// const Favorite = require('../models/favorites.model');
-// const Chat = require('../models/chats.model');
-// const bcrypt = require('bcrypt');
 
+// function to fetvh Currencies
 const fetchCurrencyData = async () => {
     const url = process.env.CURRENCY_API_URL;
     const apiKey = process.env.CURRENCY_API_KEY;
@@ -19,9 +17,9 @@ const fetchCurrencyData = async () => {
     }
 };
 
+// funtion to add loan
 const addLoan = async (req, res) => {
     try {
-        console.log(req.file);
         const { loan_name, amount, loan_term, currency } = req.body;
         const currencies = await fetchCurrencyData();
         const usd_amount = amount / currencies.data[currency].value;
@@ -51,7 +49,7 @@ const addLoan = async (req, res) => {
     }
 }
 
-
+// function to get all loans
 const getLoans = async (req, res) => {
     try {
         const loans = await Loan.find();
@@ -62,7 +60,6 @@ const getLoans = async (req, res) => {
         return res.status(500).send({ error: error.message || 'An error occurred while getting the loans' });
     }
 }
-
 
 module.exports = {
     addLoan,
