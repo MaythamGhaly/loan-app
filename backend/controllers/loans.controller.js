@@ -1,6 +1,7 @@
 const Loan = require('../models/loans.model');
 const Currencies = require("../models/currencies.model")
 const axios = require('axios');
+const mongoose = require('mongoose');
 
 // function to fetvh Currencies
 const fetchCurrencyData = async () => {
@@ -49,6 +50,27 @@ const addLoan = async (req, res) => {
     }
 }
 
+const deleteLoan = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validate if the id is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).send({ error: 'Invalid loan ID format' });
+        }
+
+        const loan = await Loan.findByIdAndDelete(id);
+        if (!loan) {
+            return res.status(404).send({ error: 'Loan not found' });
+        }
+
+        return res.send({ success: 'Loan successfully deleted' });
+    } catch (error) {
+        console.error('Error deleting loan:', error);
+        return res.status(500).send({ error: error.message || 'An error occurred while deleting the loan' });
+    }
+};
+
 // function to get all loans
 const getLoans = async (req, res) => {
     try {
@@ -63,5 +85,6 @@ const getLoans = async (req, res) => {
 
 module.exports = {
     addLoan,
-    getLoans
+    getLoans,
+    deleteLoan
 }

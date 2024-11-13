@@ -28,7 +28,11 @@ const loansSchema = new mongoose.Schema({
     loan_term: {
         type: String,
         required: 'loan term is required'
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
 
 })
 
